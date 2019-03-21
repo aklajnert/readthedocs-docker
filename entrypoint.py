@@ -2,7 +2,6 @@ import os
 import subprocess
 import sys
 
-RUN_MIGRATIONS = not bool(os.environ.get('RTD_DISABLE_MIGRATIONS', False))
 
 
 def run_command(command, shell = False):
@@ -16,13 +15,7 @@ def run_command(command, shell = False):
 
 
 def main():
-    if RUN_MIGRATIONS:
-        run_command('python manage.py migrate')
-
-    run_command(
-        'echo "from django.contrib.auth import get_user_model; User = get_user_model(); '
-        'User.objects.create_superuser(\'admin\', \'admin@myproject.com\', \'password\')", | '
-        'python manage.py shell')
+    os.execvp('python3.6', ['python3.6', 'manage.py', 'runserver'])
 
 
 if __name__ == "__main__":
