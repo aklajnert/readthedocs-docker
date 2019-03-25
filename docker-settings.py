@@ -1,11 +1,9 @@
 from __future__ import absolute_import
-import os
 
 from .base import CommunityBaseSettings
 
 
 class DockerSettings(CommunityBaseSettings):
-
     PRODUCTION_DOMAIN = 'localhost:8000'
     WEBSOCKET_HOST = 'localhost:8088'
 
@@ -13,8 +11,11 @@ class DockerSettings(CommunityBaseSettings):
     def DATABASES(self):  # noqa
         return {
             'default': {
-                'ENGINE': 'django.db.backends.postgres',
-                'NAME': os.path.join(self.SITE_ROOT, 'dev.db'),
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'rtd',
+                'USER': 'rtd-user',
+                'PASSWORD': 'rtd-password',
+                'HOST': 'db',
             }
         }
 
@@ -29,8 +30,8 @@ class DockerSettings(CommunityBaseSettings):
     SLUMBER_API_HOST = 'http://127.0.0.1:8000'
     PUBLIC_API_URL = 'http://127.0.0.1:8000'
 
-    BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    BROKER_URL = 'redis://redis:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
     CELERY_RESULT_SERIALIZER = 'json'
     CELERY_ALWAYS_EAGER = True
     CELERY_TASK_IGNORE_RESULT = False
