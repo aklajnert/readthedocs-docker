@@ -1,9 +1,8 @@
 import os
+import secrets
 import subprocess
-# import uuid
 
-from django.conf import settings
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 
 
 def main():
@@ -16,14 +15,20 @@ def main():
     collect_static = ("python", "manage.py", "collectstatic", "--noinput", "--clear", "-v", "0")
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
 
-    # admin_username = os.environ.get('RTD_ADMIN_USERNAME')
-    # admin_email = os.environ.get('RTD_ADMIN_EMAIL', 'rtd-admin@example.com')
+    admin_username = os.environ.get("RTD_ADMIN_USERNAME")
+    admin_email = os.environ.get("RTD_ADMIN_EMAIL", "rtd-admin@example.com")
 
-    # if admin_username:
-    #     if not User.objects.filter(username=admin_username).exists():
-    #         password = uuid.uuid4()
-    #         User.create_superuser(admin_username, admin_email, password)
-    #         print(f'Created admin account with username {admin_username} and password: "{password}"')
+    if admin_username:
+        User = get_user_model()
+        if not User.objects.filter(username=admin_username).exists():
+            password = secrets.token_hex(16)
+            User.objects.create_superuser(admin_username, admin_email, password)
+            print(
+                f'Created admin account with username {admin_username} and password: "{password}". '
+                f'Save the password somewhere, as it won\'t appear again.'
+            )
+        else:
+            print(f'Admin account {admin_username} already exist.')
 
     os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
 

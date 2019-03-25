@@ -15,4 +15,4 @@ COPY uwsgi.ini /etc/uwsgi.ini
 COPY entrypoint.py ./
 
 EXPOSE 8000
-ENTRYPOINT ["python", "entrypoint.py"]
+ENTRYPOINT ["python", "-u", "entrypoint.py"]

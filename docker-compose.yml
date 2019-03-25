@@ -17,6 +17,9 @@ services:
     restart: unless-stopped
     ports:
       - 8000:8000
+    environment:
+      - RTD_ADMIN_USERNAME=rtd-admin
+      - RTD_ADMIN_EMAIL=rtd-admin@example.com
     depends_on:
       - db
       - redis
