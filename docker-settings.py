@@ -43,23 +43,11 @@ class DockerSettings(CommunityBaseSettings):
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     FILE_SYNCER = 'readthedocs.builds.syncers.LocalSyncer'
 
-    # For testing locally. Put this in your /etc/hosts:
-    # 127.0.0.1 test
-    # and navigate to http://test:8000
     CORS_ORIGIN_WHITELIST = (
         '0.0.0.0:8000',
     )
 
-    # Disable auto syncing elasticsearch documents in development
     ELASTICSEARCH_DSL_AUTOSYNC = False
-
-    @property
-    def LOGGING(self):  # noqa - avoid pep8 N802
-        logging = super().LOGGING
-        logging['formatters']['default']['format'] = '[%(asctime)s] ' + self.LOG_FORMAT
-        # Allow Sphinx and other tools to create loggers
-        logging['disable_existing_loggers'] = False
-        return logging
 
 
 DockerSettings.load_settings(__name__)
