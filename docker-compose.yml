@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:10.7-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=rtd
+      - POSTGRES_PASSWORD=rtd-password
+      - POSTGRES_USER=rtd-user
+      - POSTGRES_HOST=db
+  redis:
+    image: redis:5.0.4-alpine
+    restart: unless-stopped
+  web:
+    image: readthedocs
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis

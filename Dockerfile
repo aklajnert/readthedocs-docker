@@ -7,11 +7,12 @@ RUN git clone --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 WORKDIR readthedocs.org
 RUN pip install -r requirements.txt
 
-RUN python manage.py migrate
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', 'password')", | python manage.py shell
-RUN python manage.py collectstatic
+COPY docker-settings.py readthedocs/settings/docker.py
+
+ENV DJANGO_SETTINGS_MODULE=readthedocs.settings.docker
 
 COPY uwsgi.ini /etc/uwsgi.ini
+COPY entrypoint.py ./
 
 EXPOSE 8000
-ENTRYPOINT ["uwsgi", "--ini", "/etc/uwsgi.ini"]
+ENTRYPOINT ["python", "entrypoint.py"]
