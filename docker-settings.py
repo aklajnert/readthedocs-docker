@@ -1,10 +1,14 @@
 from __future__ import absolute_import
 
+import os
+
 from .base import CommunityBaseSettings
+
+DOMAIN = os.environ.get('RTD_DOMAIN')
 
 
 class DockerSettings(CommunityBaseSettings):
-    PRODUCTION_DOMAIN = 'localhost:8000'
+    PRODUCTION_DOMAIN = DOMAIN
     WEBSOCKET_HOST = 'localhost:8088'
 
     @property
@@ -26,7 +30,7 @@ class DockerSettings(CommunityBaseSettings):
     CACHE_BACKEND = 'dummy://'
 
     SLUMBER_USERNAME = 'test'
-    SLUMBER_PASSWORD = 'test'  # noqa: ignore dodgy check
+    SLUMBER_PASSWORD = 'test'
     SLUMBER_API_HOST = 'http://127.0.0.1:8000'
     PUBLIC_API_URL = 'http://127.0.0.1:8000'
 
@@ -43,7 +47,7 @@ class DockerSettings(CommunityBaseSettings):
     # 127.0.0.1 test
     # and navigate to http://test:8000
     CORS_ORIGIN_WHITELIST = (
-        'test:8000',
+        '0.0.0.0:8000',
     )
 
     # Disable auto syncing elasticsearch documents in development
