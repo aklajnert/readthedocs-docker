@@ -29,8 +29,8 @@ class DockerSettings(CommunityBaseSettings):
     SESSION_COOKIE_DOMAIN = None
     CACHE_BACKEND = 'dummy://'
 
-    SLUMBER_USERNAME = 'test'
-    SLUMBER_PASSWORD = 'test'
+    SLUMBER_USERNAME = 'slumber'
+    SLUMBER_PASSWORD = '<slumber-password>'
     SLUMBER_API_HOST = 'http://127.0.0.1:8000'
     PUBLIC_API_URL = 'http://127.0.0.1:8000'
 

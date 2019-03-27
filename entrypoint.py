@@ -2,6 +2,7 @@ import os
 import secrets
 import subprocess
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
@@ -10,16 +11,21 @@ def main():
 
     django.setup()
 
+    User = get_user_model()
+
     migrate = ("python", "manage.py", "migrate")
     assert subprocess.call(migrate) == 0, "Database sync failed"
     collect_static = ("python", "manage.py", "collectstatic", "--noinput", "--clear", "-v", "0")
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
 
+    if not User.objects.filter(username=settings.SLUMBER_USERNAME):
+        User.objects.create_superuser(username=settings.SLUMBER_USERNAME, password=settings.SLUMBER_PASSWORD)
+        print('Created slumber user.')
+
     admin_username = os.environ.get("RTD_ADMIN_USERNAME")
     admin_email = os.environ.get("RTD_ADMIN_EMAIL", "rtd-admin@example.com")
 
     if admin_username:
-        User = get_user_model()
         if not User.objects.filter(username=admin_username).exists():
             password = secrets.token_hex(16)
             User.objects.create_superuser(admin_username, admin_email, password)
