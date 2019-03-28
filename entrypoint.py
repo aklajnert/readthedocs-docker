@@ -19,7 +19,9 @@ def main():
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
 
     if not User.objects.filter(username=settings.SLUMBER_USERNAME):
-        User.objects.create_superuser(username=settings.SLUMBER_USERNAME, password=settings.SLUMBER_PASSWORD)
+        User.objects.create_superuser(username=settings.SLUMBER_USERNAME,
+                                      password=settings.SLUMBER_PASSWORD,
+                                      email='slumber@example.com')
         print('Created slumber user.')
 
     admin_username = os.environ.get("RTD_ADMIN_USERNAME")
