@@ -23,3 +23,8 @@ Created admin account with username: "rtd-admin" and password: "<random-pass>". 
 ```
 
 Save the password, or change it because as the message says - it won't appear again.
+
+## Configuration
+
+The docker-compose 
+The docker-compose 

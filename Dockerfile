@@ -12,7 +12,11 @@ RUN set -ex && \
         postgresql-dev \
         jpeg-dev \
         zlib-dev \
-        libmemcached-dev
+        libmemcached-dev \
+        texlive-dev \
+        texlive \
+        texlive-luatex \
+        texlive-xetex
 
 RUN git clone --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 

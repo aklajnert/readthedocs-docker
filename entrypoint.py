@@ -32,7 +32,7 @@ def main():
             password = secrets.token_hex(16)
             User.objects.create_superuser(admin_username, admin_email, password)
             print(
-                f'Created admin account with username {admin_username} and password: "{password}". '
+                f'Created admin account with username: "{admin_username}" and password: "{password}". '
                 f'Save the password somewhere, as it won\'t appear again.'
             )
         else:
