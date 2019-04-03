@@ -1,32 +1,24 @@
-FROM aklajnert/snakepit:1.0-alpine-3.9
+FROM aklajnert/snakepit:1.0-stretch-slim
 
 RUN set -ex && \
-    apk update && \
-    apk add \
-        git \
-        g++ \
-        gcc \
-        libxslt-dev \
-        uwsgi \
-        uwsgi-python3 \
-        postgresql-dev \
-        jpeg-dev \
-        zlib-dev \
-        libmemcached-dev \
-        texlive-dev \
-        texlive \
-        texlive-luatex \
-        texlive-xetex
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+		git \
+		build-essential
 
 RUN git clone --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 
 WORKDIR readthedocs.org
+SHELL ["/bin/bash", "-c"]
+
 RUN set -ex && \
     python2.7 -m pip install virtualenv && \
     python3.5 -m pip install virtualenv && \
     python3.6 -m pip install virtualenv && \
     python3.7 -m pip install virtualenv && \
-    python3.6 -m venv /venv && source /venv/bin/activate && pip install -r requirements.txt psycopg2-binary
+    python3.6 -m venv /venv && \
+        source /venv/bin/activate && \
+        pip install -r requirements.txt psycopg2-binary uwsgi
 
 COPY docker-settings.py readthedocs/settings/docker.py
 
