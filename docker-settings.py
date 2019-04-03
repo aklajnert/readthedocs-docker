@@ -9,6 +9,7 @@ DOMAIN = os.environ.get('RTD_DOMAIN')
 
 class DockerSettings(CommunityBaseSettings):
     PRODUCTION_DOMAIN = DOMAIN
+    PUBLIC_DOMAIN = DOMAIN
     WEBSOCKET_HOST = 'localhost:8088'
 
     @property

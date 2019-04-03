@@ -17,6 +17,8 @@ services:
   web:
     image: readthedocs
     restart: unless-stopped
+    volumes:
+      - ./.data/rtd/builds:/readthedocs.org/user_builds
     ports:
       - 8000:8000
     environment:
