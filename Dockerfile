@@ -4,7 +4,13 @@ RUN set -ex && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
 		git \
-		build-essential
+		build-essential \
+		texlive-latex-recommended \
+        texlive-fonts-recommended \
+        texlive-latex-extra \
+        latexmk \
+        texlive-luatex \
+        texlive-xetex
 
 RUN git clone --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 
