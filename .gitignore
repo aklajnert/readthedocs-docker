@@ -64,3 +64,5 @@ env.bak/
 venv.bak/
 
 dev.db-journal
+
+.postgres-data

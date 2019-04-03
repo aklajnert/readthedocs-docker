@@ -39,3 +39,4 @@ ENV VIRTUAL_ENV /venv
 ENV PATH /venv/bin:$PATH
 
 ENTRYPOINT ["/venv/bin/python", "-u", "entrypoint.py"]
+# 0b128e8265bfe0defda2ed9ff0b1ebea
