@@ -28,13 +28,17 @@ def main():
     admin_email = os.environ.get("RTD_ADMIN_EMAIL", "rtd-admin@example.com")
 
     if admin_username:
+        from allauth.account.models import EmailAddress
         if not User.objects.filter(username=admin_username).exists():
             password = secrets.token_hex(16)
-            User.objects.create_superuser(admin_username, admin_email, password)
+            user = User.objects.create_superuser(admin_username, admin_email, password)
             print(
                 f'Created admin account with username: "{admin_username}" and password: "{password}". '
                 f'Save the password somewhere, as it won\'t appear again.'
             )
+
+            EmailAddress.objects.create(user=user, email=admin_email, primary=True, verified=True)
+
         else:
             print(f'Admin account {admin_username} already exist.')
 
