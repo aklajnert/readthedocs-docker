@@ -65,4 +65,4 @@ venv.bak/
 
 dev.db-journal
 
-.data
+.data/

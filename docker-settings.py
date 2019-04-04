@@ -49,6 +49,12 @@ class DockerSettings(CommunityBaseSettings):
     )
 
     ELASTICSEARCH_DSL_AUTOSYNC = False
+    ES_HOSTS = ['elasticsearch:9200']
+    ELASTICSEARCH_DSL = {
+        'default': {
+            'hosts': 'elasticsearch:9200'
+        },
+    }
 
 
 DockerSettings.load_settings(__name__)

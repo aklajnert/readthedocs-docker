@@ -11,9 +11,24 @@ services:
       - POSTGRES_PASSWORD=rtd-password
       - POSTGRES_USER=rtd-user
       - POSTGRES_HOST=db
+    networks:
+      - readthedocs
   redis:
     image: redis:5.0.4-alpine
     restart: unless-stopped
+    networks:
+      - readthedocs
+  elasticsearch:
+    image: elasticsearch:6.7.0
+    restart: unless-stopped
+    volumes:
+      - ./.data/elastic:/usr/share/elasticsearch/data
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - readthedocs
   web:
     image: readthedocs
     restart: unless-stopped
@@ -25,6 +40,12 @@ services:
       - RTD_ADMIN_USERNAME=rtd-admin
       - RTD_ADMIN_EMAIL=rtd-admin@example.com
       - RTD_DOMAIN=localhost:8000
+    networks:
+      - readthedocs
     depends_on:
       - db
       - redis
+      - elasticsearch
+
+networks:
+  readthedocs:
