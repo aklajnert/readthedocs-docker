@@ -24,3 +24,6 @@ Created admin account with username: "rtd-admin" and password: "<random-pass>". 
 
 Save the password, or change it because as the message says - it won't appear again.
 
+If you run via docker-compose, in the workdir will be created the `.data` directory. 
+This directory is necessary to preserve database and build images in case if the containers
+will be removed.
