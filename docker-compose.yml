@@ -34,6 +34,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./.data/rtd/builds:/readthedocs.org/user_builds
+      - ./.data/rtd/public_web_root:/readthedocs.org/public_web_root
     ports:
       - 8000:8000
     environment:
