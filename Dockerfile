@@ -12,7 +12,7 @@ RUN set -ex && \
         texlive-luatex \
         texlive-xetex
 
-RUN git clone --branch 3.4.0 --recurse-submodules https://github.com/rtfd/readthedocs.org.git
+RUN git clone --branch 3.4.1 --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 
 WORKDIR readthedocs.org
 SHELL ["/bin/bash", "-c"]

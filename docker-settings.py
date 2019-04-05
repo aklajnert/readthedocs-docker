@@ -12,6 +12,8 @@ class DockerSettings(CommunityBaseSettings):
     PUBLIC_DOMAIN = DOMAIN
     WEBSOCKET_HOST = 'localhost:8088'
 
+    DEBUG = False
+
     @property
     def DATABASES(self):  # noqa
         return {
