@@ -27,3 +27,6 @@ Save the password, or change it because as the message says - it won't appear ag
 If you run via docker-compose, in the workdir will be created the `.data` directory. 
 This directory is necessary to preserve database and build images in case if the containers
 will be removed.
+
+**WARNING!** As mentioned the [official elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode),
+you may need to set `vm.max_map_count` in kernel to at least `262144` in order to run ElasticSearch.
