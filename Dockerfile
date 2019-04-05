@@ -3,14 +3,26 @@ FROM aklajnert/snakepit:1.0-stretch-slim
 RUN set -ex && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-		git \
 		build-essential \
 		texlive-latex-recommended \
         texlive-fonts-recommended \
         texlive-latex-extra \
         latexmk \
         texlive-luatex \
-        texlive-xetex
+        texlive-xetex \
+        libssl-dev \
+        libghc-zlib-dev \
+        libcurl4-gnutls-dev \
+        libexpat1-dev \
+        gettext && \
+    # rtd requires git > 2.17, apt-get is capable to install 2.11, so it needs to be built from sources
+    wget https://github.com/git/git/archive/v2.21.0.tar.gz -O git.tar.gz && \
+    tar -zxf git.tar.gz && \
+    cd git-* && \
+    make prefix=/usr/local NO_TCLTK=YesPlease install && \
+    git --version && \
+    cd .. && \
+    rm -rf git*
 
 RUN git clone --branch 3.4.1 --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 
