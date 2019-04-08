@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import os
 
+from readthedocs.projects import constants
+
 from .base import CommunityBaseSettings
 
 DOMAIN = os.environ.get('RTD_DOMAIN')
@@ -13,6 +15,9 @@ class DockerSettings(CommunityBaseSettings):
     WEBSOCKET_HOST = 'localhost:8088'
 
     DEBUG = False
+    SERVE_DOCS = [constants.PUBLIC, constants.PRIVATE]
+
+    PYTHON_MEDIA = True # this is temporary until I'll figure out how to force uwsgi to serve media
 
     @property
     def DATABASES(self):  # noqa
