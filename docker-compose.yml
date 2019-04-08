@@ -38,6 +38,11 @@ services:
     restart: unless-stopped
     volumes:
       - ./.data/rtd/builds:/readthedocs.org/user_builds
+      - ./.data/rtd/private_cname_project:/readthedocs.org/private_cname_project
+      - ./.data/rtd/private_cname_root:/readthedocs.org/private_cname_root
+      - ./.data/rtd/private_web_root:/readthedocs.org/private_web_root
+      - ./.data/rtd/public_cname_project:/readthedocs.org/public_cname_project
+      - ./.data/rtd/public_cname_root:/readthedocs.org/public_cname_root
       - ./.data/rtd/public_web_root:/readthedocs.org/public_web_root
     ports:
       - 8000:8000
