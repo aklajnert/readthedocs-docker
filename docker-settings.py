@@ -6,13 +6,17 @@ from readthedocs.projects import constants
 
 from .base import CommunityBaseSettings
 
-DOMAIN = os.environ.get('RTD_DOMAIN')
 
+def env(variable, default=None):
+    return os.environ.get(variable, default)
+
+
+DOMAIN = env('RTD_DOMAIN', 'localhost')
 
 class DockerSettings(CommunityBaseSettings):
     PRODUCTION_DOMAIN = DOMAIN
     PUBLIC_DOMAIN = DOMAIN
-    WEBSOCKET_HOST = 'localhost:8088'
+    WEBSOCKET_HOST = f'{DOMAIN}:8088'
 
     DEBUG = False
     SERVE_DOCS = [constants.PUBLIC, constants.PRIVATE]
@@ -24,10 +28,10 @@ class DockerSettings(CommunityBaseSettings):
         return {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'rtd',
-                'USER': 'rtd-user',
-                'PASSWORD': 'rtd-password',
-                'HOST': 'db',
+                'NAME': env('RTD_DB_NAME', 'rtd'),
+                'USER': env('RTD_DB_USER', 'rtd-user'),
+                'PASSWORD': env('RTD_DB_PASS', 'rtd-password'),
+                'HOST': env('RTD_DB_HOST', 'db'),
             }
         }
 
@@ -42,8 +46,11 @@ class DockerSettings(CommunityBaseSettings):
     SLUMBER_API_HOST = 'http://127.0.0.1:8000'
     PUBLIC_API_URL = 'http://127.0.0.1:8000'
 
-    BROKER_URL = 'redis://redis:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+    REDIS_HOST = env("RTD_REDIS_HOST", "redis")
+    REDIS_PORT = env("RTD_REDIS_PORT", "6379")
+
+    BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+    CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
     CELERY_RESULT_SERIALIZER = 'json'
     CELERY_ALWAYS_EAGER = True
     CELERY_TASK_IGNORE_RESULT = False
@@ -55,11 +62,14 @@ class DockerSettings(CommunityBaseSettings):
         '0.0.0.0:8000',
     )
 
+    ELASTIC_HOST = env("RTD_ELASTIC_HOST", "elasticsearch")
+    ELASTIC_PORT = env("RTD_ELASTIC_PORT", "9200")
+
     ELASTICSEARCH_DSL_AUTOSYNC = False
-    ES_HOSTS = ['elasticsearch:9200']
+    ES_HOSTS = [f'{ELASTIC_HOST}:{ELASTIC_PORT}']
     ELASTICSEARCH_DSL = {
         'default': {
-            'hosts': 'elasticsearch:9200'
+            'hosts': f'{ELASTIC_HOST}:{ELASTIC_PORT}'
         },
     }
 
