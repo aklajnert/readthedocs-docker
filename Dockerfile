@@ -45,7 +45,7 @@ ENV DJANGO_SETTINGS_MODULE=readthedocs.settings.docker
 COPY uwsgi.ini /etc/uwsgi.ini
 COPY entrypoint.py ./
 
-EXPOSE 8000
+EXPOSE 8000 8088
 
 ENV VIRTUAL_ENV /venv
 ENV PATH /venv/bin:$PATH
