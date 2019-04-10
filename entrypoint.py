@@ -42,8 +42,10 @@ def main():
         else:
             print(f'Admin account {admin_username} already exist.')
 
-    os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
-
+    if not os.environ.get('RTD_DISABLE_UWSGI'):
+        os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
+    else:
+        os.execvp("/venv/bin/python", ["/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8000"])
 
 if __name__ == "__main__":
     main()
