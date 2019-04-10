@@ -49,7 +49,6 @@ services:
     environment:
       - RTD_ADMIN_USERNAME=rtd-admin
       - RTD_ADMIN_EMAIL=rtd-admin@example.com
-      - RTD_DOMAIN=localhost:8000
     networks:
       - readthedocs
     depends_on:

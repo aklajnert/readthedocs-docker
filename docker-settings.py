@@ -15,8 +15,8 @@ DOMAIN = env("RTD_DOMAIN", "localhost")
 
 
 class DockerSettings(CommunityBaseSettings):
-    PRODUCTION_DOMAIN = DOMAIN
-    PUBLIC_DOMAIN = DOMAIN
+    PRODUCTION_DOMAIN = f"{DOMAIN}:8000"
+    PUBLIC_DOMAIN = f"{DOMAIN}:8000"
     WEBSOCKET_HOST = f"{DOMAIN}:8088"
 
     DEBUG = env("RTD_DEBUG", False)
