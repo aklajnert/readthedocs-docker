@@ -18,7 +18,7 @@ class DockerSettings(CommunityBaseSettings):
     PUBLIC_DOMAIN = DOMAIN
     WEBSOCKET_HOST = f'{DOMAIN}:8088'
 
-    DEBUG = False
+    DEBUG = env('RTD_DEBUG', False)
     SERVE_DOCS = [constants.PUBLIC, constants.PRIVATE]
 
     PYTHON_MEDIA = True # this is temporary until I'll figure out how to force uwsgi to serve media
