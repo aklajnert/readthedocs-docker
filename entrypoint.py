@@ -45,7 +45,7 @@ def main():
     if not os.environ.get('RTD_DISABLE_UWSGI'):
         os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
     else:
-        os.execvp("/venv/bin/python", ["/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8000"])
+        os.execvp("/venv/bin/python", ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"])
 
 if __name__ == "__main__":
     main()
