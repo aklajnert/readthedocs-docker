@@ -30,3 +30,28 @@ will be removed.
 
 **WARNING!** As mentioned the [official elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode),
 you may need to set `vm.max_map_count` in kernel to at least `262144` in order to run ElasticSearch.
+
+## Configuration
+
+The `docker-compose.yaml` comes with sane defaults allowing you to quickly test the solution,
+but before deploying into production, you may need to do some setup.
+
+All the configuration is done via environment variables:
+
+- **RTD_DOMAIN** (`localhost`): domain name of the readthedocs instance,
+- **RTD_ADMIN_USERNAME** (`rtd-admin`) - username for the admin user; this is set in the compose
+    file, no admin account will be created if this variable is missing,
+- **RTD_ADMIN_EMAIL** (`rtd-admin@example.com`) - readthedocs admin e-mail,
+- **RTD_DEBUG** (`False`): run Django in debug mode,
+- **RTD_DB_NAME** (`rtd`): name of the Postgres readthedocs database,
+- **RTD_DB_USER** (`rtd-user`): username for the database,
+- **RTD_DB_PASS** (`rtd-password`): database password,
+- **RTD_DB_HOST** (`db`): hostname with running database,
+- **RTD_SLUMBER_USER** (`slumber`): username for the slumber API; the account will be created
+    if missing,
+- **RTD_SLUMBER_PASS** (`<slumber-password>`): password for slumber API; the slumber account is
+    a superuser account, so you should keep the password secret,
+- **RTD_REDIS_HOST** (`redis`): hostname with running Redis,
+- **RTD_REDIS_PORT** (`6379`): port number to connect with Redis,
+- **RTD_ELASTIC_HOST** (`elasticsearch`): hostname of the Elasticsearch server,
+- **RTD_ELASTIC_PORT** (`9200`): port number for Elasticsearch.
