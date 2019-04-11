@@ -20,7 +20,7 @@ def get_open_port():
                     continue
                 raise exc
             return port
-        raise Exception('Cannot find open port.')
+        raise Exception("Cannot find open port.")
 
 
 class TempDir(tempfile.TemporaryDirectory):
@@ -30,7 +30,7 @@ class TempDir(tempfile.TemporaryDirectory):
         try:
             super().__exit__(exc_type, exc_val, exc_tb)
         except PermissionError:
-            print('Failed to cleanup directory ({}). Try running as a root.'.format(self.name))
+            print("Failed to cleanup directory ({}). Try running as a root.".format(self.name))
 
 
 class Compose:
@@ -41,18 +41,26 @@ class Compose:
     def __init__(self, directory):
         self._directory = directory
         self.open_port = get_open_port()
-        with open(os.path.join(os.path.dirname(__file__), "../docker-compose.yml")) as compose_fh:
+        root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(root_dir, "docker-compose.yml")) as compose_fh:
             compose = yaml.safe_load(compose_fh)
 
-        compose['services']['web']['ports'][0] = ":".join([str(self.open_port), '8000'])
+        compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
 
-        with open(os.path.join(directory, "docker-compose.yml"), 'w') as target_compose_fh:
+        image_name = compose["services"]["web"]["image"]
+        images = subprocess.check_output(("docker", "images", image_name)).decode()
+        if len(images.splitlines()) == 1:
+            print("Docker image {} not found. Building...".format(image_name))
+            subprocess.call(("docker", "build", "-t", image_name, "."), cwd=root_dir)
+
+        with open(os.path.join(directory, "docker-compose.yml"), "w") as target_compose_fh:
             yaml.dump(compose, target_compose_fh)
         self.username = None
         self.password = None
 
     def __enter__(self):
         subprocess.call(["docker-compose", "up", "-d"], cwd=self._directory)
+
         n = 0
         while n < 60:
             logs = self.get_logs()
@@ -73,9 +81,7 @@ class Compose:
 
     def get_logs(self, app="web"):
         """Read application logs."""
-        return subprocess.check_output(
-            ["docker-compose", "logs", app], cwd=self._directory
-        ).decode()
+        return subprocess.check_output(["docker-compose", "logs", app], cwd=self._directory).decode()
 
 
 def run_app():
