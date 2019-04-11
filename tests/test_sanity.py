@@ -10,4 +10,7 @@ def test_sanity(app):
 
     assert len(response.html.find('a', containing=DESIRED_RTD_VERSION)) == 1
 
+    login_link = response.html.find('a', containing='Log in')
+    response.get(login_link)
+
     assert response.status_code == 200
