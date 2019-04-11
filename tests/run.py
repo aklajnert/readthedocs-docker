@@ -1,9 +1,36 @@
+import errno
 import os
 import re
-import shutil
+import socket
 import subprocess
 import tempfile
 import time
+
+import yaml
+
+
+def get_open_port():
+    """Scan for open port to run container."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket_:
+        for port in range(9000, 10000):
+            try:
+                socket_.bind(("127.0.0.1", port))
+            except socket.error as exc:
+                if exc.errno == errno.EADDRINUSE:
+                    continue
+                raise exc
+            return port
+        raise Exception('Cannot find open port.')
+
+
+class TempDir(tempfile.TemporaryDirectory):
+    """Override __exit__ to not raise exception."""
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            super().__exit__(exc_type, exc_val, exc_tb)
+        except PermissionError:
+            print('Failed to cleanup directory ({}). Try running as a root.'.format(self.name))
 
 
 class Compose:
@@ -13,10 +40,14 @@ class Compose:
 
     def __init__(self, directory):
         self._directory = directory
-        shutil.copy(
-            os.path.join(os.path.dirname(__file__), "docker-compose.yml"),
-            os.path.join(directory, "docker-compose.yml"),
-        )
+        self.open_port = get_open_port()
+        with open(os.path.join(os.path.dirname(__file__), "../docker-compose.yml")) as compose_fh:
+            compose = yaml.safe_load(compose_fh)
+
+        compose['services']['web']['ports'][0] = ":".join([str(self.open_port), '8000'])
+
+        with open(os.path.join(directory, "docker-compose.yml"), 'w') as target_compose_fh:
+            yaml.dump(compose, target_compose_fh)
         self.username = None
         self.password = None
 
@@ -49,11 +80,11 @@ class Compose:
 
 def run_app():
     """Run application via compose and check if everything looks fine."""
-    with tempfile.TemporaryDirectory() as tempdir:
+    with TempDir() as tempdir:
         compose = Compose(tempdir)
         with compose:
             print(
-                "Web service is running. Log in with username:",
+                "Web service is running on port: {}. Log in with username:".format(compose.open_port),
                 compose.username,
                 "and password:",
                 compose.password,
