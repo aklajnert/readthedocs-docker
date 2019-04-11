@@ -84,18 +84,21 @@ class Compose:
         return subprocess.check_output(["docker-compose", "logs", app], cwd=self._directory).decode()
 
 
-def run_app():
+def run_app(wait_for_input=True):
     """Run application via compose and check if everything looks fine."""
     with TempDir() as tempdir:
         compose = Compose(tempdir)
         with compose:
-            print(
-                "Web service is running on port: {}. Log in with username:".format(compose.open_port),
-                compose.username,
-                "and password:",
-                compose.password,
-            )
-            input("Press any key to exit...")
+            if wait_for_input:
+                print(
+                    "Web service is running on port: {}. Log in with username:".format(compose.open_port),
+                    compose.username,
+                    "and password:",
+                    compose.password,
+                )
+                input("Press any key to exit...")
+            else:
+                yield (compose.open_port, compose.username, compose.password)
 
 
 if __name__ == "__main__":
