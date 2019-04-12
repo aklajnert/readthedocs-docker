@@ -102,4 +102,4 @@ def run_app(wait_for_input=True):
 
 
 if __name__ == "__main__":
-    run_app()
+    next(run_app(), None)
