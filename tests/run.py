@@ -1,10 +1,10 @@
 import errno
-import os
 import re
 import socket
 import subprocess
 import tempfile
 import time
+from pathlib import Path
 
 import yaml
 
@@ -39,10 +39,10 @@ class Compose:
     credentials_regex = re.compile(r'username: "(.*)" and password: "(.*)"\.')
 
     def __init__(self, directory):
-        self._directory = directory
+        self._directory = Path(directory)
         self.open_port = get_open_port()
-        root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
-        with open(os.path.join(root_dir, "docker-compose.yml")) as compose_fh:
+        root_dir = Path(__file__).parents[1]
+        with open(root_dir / "docker-compose.yml") as compose_fh:
             compose = yaml.safe_load(compose_fh)
 
         compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
@@ -53,7 +53,7 @@ class Compose:
             print("Docker image {} not found. Building...".format(image_name))
             subprocess.call(("docker", "build", "-t", image_name, "."), cwd=root_dir)
 
-        with open(os.path.join(directory, "docker-compose.yml"), "w") as target_compose_fh:
+        with open(self._directory / "docker-compose.yml", "w") as target_compose_fh:
             yaml.dump(compose, target_compose_fh)
         self.username = None
         self.password = None
