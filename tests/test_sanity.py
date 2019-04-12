@@ -50,16 +50,19 @@ def test_sanity(app):
         while True:
             builds = driver.find_elements_by_xpath("//li/div/a")
             if len(builds) == 1:
-                builds[0].text.startswith("Triggered")
-                time.sleep(10)
-                driver.refresh()
+                build_text = builds[0].text
+                if build_text.startswith("Triggered"):
+                    time.sleep(10)
+                    driver.refresh()
+                else:
+                    break
             else:
                 break
             n += 1
             if n > 60:
                 break
             elif n % 6:
-                print(builds[0].text)
+                print(build_text)
 
         try:
             assert all(build.text.startswith("Passed") for build in builds)
