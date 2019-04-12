@@ -19,33 +19,37 @@ def main():
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
 
     if not User.objects.filter(username=settings.SLUMBER_USERNAME):
-        User.objects.create_superuser(username=settings.SLUMBER_USERNAME,
-                                      password=settings.SLUMBER_PASSWORD,
-                                      email='slumber@example.com')
-        print('Created slumber user.')
+        User.objects.create_superuser(
+            username=settings.SLUMBER_USERNAME,
+            password=settings.SLUMBER_PASSWORD,
+            email="slumber@example.com",
+        )
+        print("Created slumber user.")
 
     admin_username = os.environ.get("RTD_ADMIN_USERNAME")
     admin_email = os.environ.get("RTD_ADMIN_EMAIL", "rtd-admin@example.com")
 
     if admin_username:
         from allauth.account.models import EmailAddress
+
         if not User.objects.filter(username=admin_username).exists():
             password = secrets.token_hex(16)
             user = User.objects.create_superuser(admin_username, admin_email, password)
             print(
                 f'Created admin account with username: "{admin_username}" and password: "{password}". '
-                f'Save the password somewhere, as it won\'t appear again.'
+                f"Save the password somewhere, as it won't appear again."
             )
 
             EmailAddress.objects.create(user=user, email=admin_email, primary=True, verified=True)
 
         else:
-            print(f'Admin account {admin_username} already exist.')
+            print(f"Admin account {admin_username} already exist.")
 
-    if not os.environ.get('RTD_DISABLE_UWSGI'):
+    if not os.environ.get("RTD_DISABLE_UWSGI"):
         os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
     else:
         os.execvp("/venv/bin/python", ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"])
+
 
 if __name__ == "__main__":
     main()

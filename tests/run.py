@@ -46,7 +46,7 @@ class Compose:
             compose = yaml.safe_load(compose_fh)
 
         compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
-        compose["services"]["web"]["environment"].append('RTD_DOMAIN=localhost:{}'.format(self.open_port))
+        compose["services"]["web"]["environment"].append("RTD_DOMAIN=localhost:{}".format(self.open_port))
 
         image_name = compose["services"]["web"]["image"]
         images = subprocess.check_output(("docker", "images", image_name)).decode()
@@ -66,13 +66,13 @@ class Compose:
         while n < 60:
             logs = self.get_logs()
             if "spawned uWSGI worker" in logs:
-                break
-
-            if not self.username:
                 match = self.credentials_regex.search(logs)
                 if match:
                     self.username = match.group(1)
                     self.password = match.group(2)
+                else:
+                    raise Exception("Cannot determine username or password.")
+                break
 
             time.sleep(1)
             n += 1
@@ -90,8 +90,6 @@ def run_app(wait_for_input=True):
     with TempDir() as tempdir:
         compose = Compose(tempdir)
         with compose:
-            if not compose.username or not compose.password:
-                raise Exception("Cannot determine username or password.")
             if wait_for_input:
                 print(
                     "Web service is running on port: {}. Log in with username:".format(compose.open_port),

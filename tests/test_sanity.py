@@ -4,7 +4,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-DESIRED_RTD_VERSION = '3.4.1'
+DESIRED_RTD_VERSION = "3.4.1"
 
 
 class Driver:
@@ -17,7 +17,7 @@ class Driver:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
 
-        self.driver = webdriver.Chrome(Path(__file__).parent / 'chromedriver', options=chrome_options)
+        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver", options=chrome_options)
         return self.driver
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -29,19 +29,24 @@ def test_sanity(app):
     port, username, password = app
 
     with Driver() as driver:
-        driver.get('http://localhost:{}'.format(port))
+        print("Starting selenium...")
+        driver.get("http://localhost:{}".format(port))
 
         version = driver.find_element_by_xpath("//a[@href='http://docs.readthedocs.io/page/changelog.html']")
         assert version.text == DESIRED_RTD_VERSION
 
         _log_in(driver, password, username)
 
-        assert driver.title == 'Project Dashboard | Read the Docs'
+        assert driver.title == "Project Dashboard | Read the Docs"
 
         # check if the documentation will be built properly
+        time.sleep(1)
         driver.find_element_by_link_text("Import our own demo project").click()
+
+        time.sleep(1)
         driver.find_element_by_link_text("Builds").click()
 
+        n = 0
         while True:
             builds = driver.find_elements_by_xpath("//li/div/a")
             if len(builds) == 1:
@@ -49,11 +54,17 @@ def test_sanity(app):
                 time.sleep(10)
             else:
                 break
+            n += 1
+            if n > 60:
+                break
+            elif n % 6:
+                print("Waiting for build...")
+
         assert all(build.text.startswith("Passed") for build in builds)
 
 
 def _log_in(driver, password, username):
     driver.find_element_by_link_text("Log in").click()
-    driver.find_element_by_id('id_login').send_keys(username)
-    driver.find_element_by_id('id_password').send_keys(password)
+    driver.find_element_by_id("id_login").send_keys(username)
+    driver.find_element_by_id("id_password").send_keys(password)
     driver.find_element_by_xpath("//button[contains(.,'Sign In')]").click()
