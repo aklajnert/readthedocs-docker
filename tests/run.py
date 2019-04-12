@@ -46,12 +46,13 @@ class Compose:
             compose = yaml.safe_load(compose_fh)
 
         compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
+        compose["services"]["web"]["environment"].append('RTD_DOMAIN=localhost:{}'.format(self.open_port))
 
         image_name = compose["services"]["web"]["image"]
         images = subprocess.check_output(("docker", "images", image_name)).decode()
         if len(images.splitlines()) == 1:
             print("Docker image {} not found. Building...".format(image_name))
-            subprocess.call(("docker", "build", "-t", image_name, "."), cwd=root_dir)
+            subprocess.call(("docker", "build", "-t", image_name, "."), cwd=str(root_dir))
 
         with open(self._directory / "docker-compose.yml", "w") as target_compose_fh:
             yaml.dump(compose, target_compose_fh)
@@ -77,11 +78,11 @@ class Compose:
             n += 1
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        subprocess.call(["docker-compose", "down"], cwd=self._directory)
+        subprocess.call(["docker-compose", "down"], cwd=str(self._directory))
 
     def get_logs(self, app="web"):
         """Read application logs."""
-        return subprocess.check_output(["docker-compose", "logs", app], cwd=self._directory).decode()
+        return subprocess.check_output(["docker-compose", "logs", app], cwd=str(self._directory)).decode()
 
 
 def run_app(wait_for_input=True):
@@ -89,6 +90,8 @@ def run_app(wait_for_input=True):
     with TempDir() as tempdir:
         compose = Compose(tempdir)
         with compose:
+            if not compose.username or not compose.password:
+                raise Exception("Cannot determine username or password.")
             if wait_for_input:
                 print(
                     "Web service is running on port: {}. Log in with username:".format(compose.open_port),
