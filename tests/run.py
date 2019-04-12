@@ -99,7 +99,7 @@ def run_app(wait_for_input=True):
                 )
                 input("Press any key to exit...")
             else:
-                yield (compose.open_port, compose.username, compose.password)
+                yield compose
 
 
 if __name__ == "__main__":

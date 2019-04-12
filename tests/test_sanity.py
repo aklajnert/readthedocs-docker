@@ -26,16 +26,16 @@ class Driver:
 
 def test_sanity(app):
     """Check if the basic functionality works correctly."""
-    port, username, password = app
+    compose = app
 
     with Driver() as driver:
         print("Starting selenium...")
-        driver.get("http://localhost:{}".format(port))
+        driver.get("http://localhost:{}".format(compose.open_port))
 
         version = driver.find_element_by_xpath("//a[@href='http://docs.readthedocs.io/page/changelog.html']")
         assert version.text == DESIRED_RTD_VERSION
 
-        _log_in(driver, password, username)
+        _log_in(driver, compose.username, compose.password)
 
         assert driver.title == "Project Dashboard | Read the Docs"
 
@@ -52,18 +52,23 @@ def test_sanity(app):
             if len(builds) == 1:
                 builds[0].text.startswith("Triggered")
                 time.sleep(10)
+                driver.refresh()
             else:
                 break
             n += 1
             if n > 60:
                 break
             elif n % 6:
-                print("Waiting for build...")
+                print(builds[0].text)
 
-        assert all(build.text.startswith("Passed") for build in builds)
+        try:
+            assert all(build.text.startswith("Passed") for build in builds)
+        except AssertionError:
+            print(compose.get_logs())
+            raise
 
 
-def _log_in(driver, password, username):
+def _log_in(driver, username, password):
     driver.find_element_by_link_text("Log in").click()
     driver.find_element_by_id("id_login").send_keys(username)
     driver.find_element_by_id("id_password").send_keys(password)
