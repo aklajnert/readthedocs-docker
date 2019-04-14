@@ -17,7 +17,7 @@ class Driver:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
 
-        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver", options=chrome_options)
+        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver")#, options=chrome_options)
         return self.driver
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -46,32 +46,7 @@ def test_sanity(app):
         time.sleep(1)
         driver.find_element_by_link_text("Builds").click()
 
-        time.sleep(1)
-        print(compose.get_logs())
-
-        n = 0
-        while True:
-            builds = driver.find_elements_by_xpath("//li/div/a")
-            if len(builds) == 1:
-                build_text = builds[0].text
-                if build_text.startswith("Triggered"):
-                    time.sleep(10)
-                    driver.get(driver.current_url)
-                else:
-                    break
-            else:
-                break
-            n += 1
-            if n > 60:
-                break
-            elif n % 6:
-                print(build_text)
-
-        try:
-            assert all(build.text.startswith("Passed") for build in builds)
-        except AssertionError:
-            print(compose.get_logs())
-            raise
+        assert all(build.text.startswith("Passed") for build in builds)
 
 
 def _log_in(driver, username, password):

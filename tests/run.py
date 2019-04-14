@@ -46,7 +46,7 @@ class Compose:
             compose = yaml.safe_load(compose_fh)
 
         compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
-        compose["services"]["web"]["environment"].append("RTD_DOMAIN=localhost:{}".format(self.open_port))
+        # compose["services"]["web"]["environment"].append("RTD_DOMAIN=localhost:{}".format(self.open_port))
 
         image_name = compose["services"]["web"]["image"]
         images = subprocess.check_output(("docker", "images", image_name)).decode()
