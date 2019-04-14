@@ -46,6 +46,7 @@ def test_sanity(app):
         time.sleep(1)
         driver.find_element_by_link_text("Builds").click()
 
+        builds = driver.find_elements_by_xpath("//li/div/a")
         assert all(build.text.startswith("Passed") for build in builds)
 
 
