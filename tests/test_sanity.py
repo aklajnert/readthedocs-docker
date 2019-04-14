@@ -17,7 +17,7 @@ class Driver:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
 
-        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver")#, options=chrome_options)
+        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver", options=chrome_options)
         return self.driver
 
     def __exit__(self, exc_type, exc_val, exc_tb):
