@@ -46,6 +46,9 @@ def test_sanity(app):
         time.sleep(1)
         driver.find_element_by_link_text("Builds").click()
 
+        time.sleep(1)
+        print(compose.get_logs())
+
         n = 0
         while True:
             builds = driver.find_elements_by_xpath("//li/div/a")
@@ -53,7 +56,7 @@ def test_sanity(app):
                 build_text = builds[0].text
                 if build_text.startswith("Triggered"):
                     time.sleep(10)
-                    driver.refresh()
+                    driver.get(driver.current_url)
                 else:
                     break
             else:
