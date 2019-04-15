@@ -1,3 +1,4 @@
+import os
 import time
 from pathlib import Path
 
@@ -5,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 DESIRED_RTD_VERSION = "3.4.1"
+SHOW_BROWSER = os.environ.get('SHOW_BROWSER', False)
 
 
 class Driver:
@@ -15,7 +17,8 @@ class Driver:
 
     def __enter__(self):
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
+        if not SHOW_BROWSER:
+            chrome_options.add_argument("--headless")
 
         self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver", options=chrome_options)
         return self.driver
