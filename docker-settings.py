@@ -11,12 +11,11 @@ def env(variable, default=None):
     return os.environ.get(variable, default)
 
 
-DOMAIN = env("RTD_DOMAIN", "localhost").split(':')
+DOMAIN = env("RTD_DOMAIN", "localhost:8000").split(":")
 
 
 class DockerSettings(CommunityBaseSettings):
     PRODUCTION_DOMAIN = ":".join(DOMAIN)
-    PUBLIC_DOMAIN = ":".join(DOMAIN)
     WEBSOCKET_HOST = f"{DOMAIN[0]}:8088"
 
     DEBUG = env("RTD_DEBUG", False)
