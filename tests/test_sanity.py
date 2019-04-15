@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 DESIRED_RTD_VERSION = "3.4.1"
-SHOW_BROWSER = os.environ.get('SHOW_BROWSER', False)
+SHOW_BROWSER = os.environ.get("SHOW_BROWSER", False)
 
 
 class Driver:
@@ -51,6 +51,13 @@ def test_sanity(app):
 
         builds = driver.find_elements_by_xpath("//li/div/a")
         assert all(build.text.startswith("Passed") for build in builds)
+
+        driver.find_element_by_link_text("View Docs").click()
+
+        assert driver.current_url == f"http://localhost:{compose.open_port}/docs/rtd-admin-demo/en/latest/"
+        assert (
+            driver.find_element_by_tag_name("h1").text == "Welcome to Read the Docs Template’s documentation!"
+        )
 
 
 def _log_in(driver, username, password):
