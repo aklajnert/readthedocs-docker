@@ -39,7 +39,7 @@ class Compose:
 
     credentials_regex = re.compile(r'username: "(.*)" and password: "(.*)"\.')
 
-    def __init__(self, directory, with_ldap):
+    def __init__(self, directory):
         self._directory = Path(directory)
         self.open_port = get_open_port()
         root_dir = Path(__file__).parents[1]
@@ -48,9 +48,6 @@ class Compose:
 
         compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
         compose["services"]["web"]["environment"].append("RTD_DOMAIN=localhost:{}".format(self.open_port))
-
-        if with_ldap:
-            self._add_ldap(compose)
 
 
         image_name = compose["services"]["web"]["image"]
@@ -63,16 +60,6 @@ class Compose:
             yaml.dump(compose, target_compose_fh)
         self.username = None
         self.password = None
-
-    def _add_ldap(self, compose):
-        compose["services"]["ldap"] = {}
-        compose["services"]["ldap"]["image"] = "osixia/openldap:1.2.4"
-        compose["services"]["ldap"]["restart"] = "unless-stopped"
-        compose["services"]["ldap"]["networks"] = ["readthedocs"]
-        compose["services"]["ldap"]["environment"] = ['LDAP_ORGANISATION="My Company"',
-                                                      'LDAP_DOMAIN="my-company.com"',
-                                                      'LDAP_ADMIN_PASSWORD="LDAP-ADMIN-PASS"']
-        compose["services"]["web"]["depends_on"].append("ldap")
 
     def __enter__(self):
         subprocess.call(["docker-compose", "up", "-d"], cwd=self._directory)
@@ -100,10 +87,10 @@ class Compose:
         return subprocess.check_output(["docker-compose", "logs", app], cwd=str(self._directory)).decode()
 
 
-def run_app(wait_for_input=True, with_ldap=False):
+def run_app(wait_for_input=True):
     """Run application via compose and check if everything looks fine."""
     with TempDir() as tempdir:
-        compose = Compose(tempdir, with_ldap)
+        compose = Compose(tempdir)
         with compose:
             if wait_for_input:
                 print(
@@ -118,6 +105,4 @@ def run_app(wait_for_input=True, with_ldap=False):
 
 
 if __name__ == "__main__":
-    with_ldap = bool(os.environ.get('TEST_WITH_LDAP'))
-
-    next(run_app(with_ldap=with_ldap), None)
+    next(run_app(), None)
