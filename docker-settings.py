@@ -21,7 +21,10 @@ class DockerSettings(CommunityBaseSettings):
     DEBUG = env("RTD_DEBUG", False)
     SERVE_DOCS = [constants.PUBLIC, constants.PRIVATE]
 
-    PYTHON_MEDIA = True  # this is temporary until I'll figure out how to force uwsgi to serve media
+    # uwsgi doesn't support X-Accel-Redirect, so all media files have to be served by Django.
+    # That shouldn't be a big problem for the application, but in case of any performance
+    # issues, it might be worth to add nginx to serve static files.
+    PYTHON_MEDIA = True
 
     @property
     def DATABASES(self):  # noqa
