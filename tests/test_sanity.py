@@ -5,7 +5,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-DESIRED_RTD_VERSION = "3.4.1"
+DESIRED_RTD_VERSION = "3.5.3"
 SHOW_BROWSER = os.environ.get("SHOW_BROWSER", False)
 
 
@@ -20,7 +20,9 @@ class Driver:
         if not SHOW_BROWSER:
             chrome_options.add_argument("--headless")
 
-        self.driver = webdriver.Chrome(Path(__file__).parent / "chromedriver", options=chrome_options)
+        self.driver = webdriver.Chrome(
+            Path(__file__).parent / "chromedriver_72.0.3626.7", options=chrome_options
+        )
         return self.driver
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -35,7 +37,9 @@ def test_sanity(app):
         print("Starting selenium...")
         driver.get("http://localhost:{}".format(compose.open_port))
 
-        version = driver.find_element_by_xpath("//a[@href='http://docs.readthedocs.io/page/changelog.html']")
+        version = driver.find_element_by_xpath(
+            "//a[@href='http://docs.readthedocs.io/page/changelog.html']"
+        )
         assert version.text == DESIRED_RTD_VERSION
 
         _log_in(driver, compose.username, compose.password)
@@ -54,9 +58,13 @@ def test_sanity(app):
 
         driver.find_element_by_link_text("View Docs").click()
 
-        assert driver.current_url == f"http://localhost:{compose.open_port}/docs/rtd-admin-demo/en/latest/"
         assert (
-            driver.find_element_by_tag_name("h1").text == "Welcome to Read the Docs Template’s documentation!"
+            driver.current_url
+            == f"http://localhost:{compose.open_port}/docs/rtd-admin-demo/en/latest/"
+        )
+        assert (
+            driver.find_element_by_tag_name("h1").text
+            == "Welcome to Read the Docs Template’s documentation!"
         )
 
 

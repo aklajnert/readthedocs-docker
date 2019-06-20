@@ -15,7 +15,15 @@ def main():
 
     migrate = ("python", "manage.py", "migrate")
     assert subprocess.call(migrate) == 0, "Database sync failed"
-    collect_static = ("python", "manage.py", "collectstatic", "--noinput", "--clear", "-v", "0")
+    collect_static = (
+        "python",
+        "manage.py",
+        "collectstatic",
+        "--noinput",
+        "--clear",
+        "-v",
+        "0",
+    )
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
 
     if not User.objects.filter(username=settings.SLUMBER_USERNAME):
@@ -40,7 +48,9 @@ def main():
                 f"Save the password somewhere, as it won't appear again."
             )
 
-            EmailAddress.objects.create(user=user, email=admin_email, primary=True, verified=True)
+            EmailAddress.objects.create(
+                user=user, email=admin_email, primary=True, verified=True
+            )
 
         else:
             print(f"Admin account {admin_username} already exist.")
@@ -48,7 +58,10 @@ def main():
     if not os.environ.get("RTD_DISABLE_UWSGI"):
         os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
     else:
-        os.execvp("/venv/bin/python", ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"])
+        os.execvp(
+            "/venv/bin/python",
+            ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"],
+        )
 
 
 if __name__ == "__main__":
