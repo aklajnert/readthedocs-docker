@@ -24,7 +24,7 @@ RUN set -ex && \
     cd .. && \
     rm -rf git*
 
-RUN git clone --branch 3.7.2 --recurse-submodules https://github.com/rtfd/readthedocs.org.git
+RUN git clone --branch 3.7.4 --recurse-submodules https://github.com/rtfd/readthedocs.org.git
 
 WORKDIR readthedocs.org
 SHELL ["/bin/bash", "-c"]
