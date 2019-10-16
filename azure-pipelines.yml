@@ -25,3 +25,8 @@ resources:
 steps:
 - script: 'docker build -t readthedocs .'
   displayName: 'Build image'
+
+- script: 'pytest -s'
+  displayName: 'Run tests'
+
+
