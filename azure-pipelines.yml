@@ -4,6 +4,24 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+resources:
+  containers:
+    - container: postgres
+      image: postgres:10.7-alpine
+      env:
+        POSTGRES_DB: rtd
+        POSTGRES_PASSWORD: rtd-password
+        POSTGRES_USER: rtd-user
+        POSTGRES_HOST: db
+    - container: redis
+      image: redis:5.0.4-alpine
+    - container: elasticsearch
+      image: elasticsearch:6.7.0
+      envi:
+        cluster.name: docker-cluster
+        bootstrap.memory_lock: true
+        ES_JAVA_OPTS: "-Xms750m -Xmx750m"
+
 steps:
 - script: 'docker build -t readthedocs .'
   displayName: 'Build image'
