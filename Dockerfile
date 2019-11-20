@@ -1,4 +1,4 @@
-FROM aklajnert/snakepit:1.0-stretch-slim
+FROM aklajnert/snakepit:2.0-bullseye-slim
 
 RUN set -ex && \
     apt-get update && \
@@ -34,7 +34,8 @@ RUN set -ex && \
     python3.5 -m pip install virtualenv && \
     python3.6 -m pip install virtualenv && \
     python3.7 -m pip install virtualenv && \
-    python3.6 -m venv /venv && \
+    python3.8 -m pip install virtualenv && \
+    python3.7 -m venv /venv && \
         source /venv/bin/activate && \
         pip install -r requirements.txt psycopg2-binary uwsgi
 
