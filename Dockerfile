@@ -35,7 +35,7 @@ RUN set -ex && \
     python3.6 -m pip install virtualenv && \
     python3.7 -m pip install virtualenv && \
     python3.8 -m pip install virtualenv && \
-    python3.7 -m venv /venv && \
+    python3.6 -m venv /venv && \
         source /venv/bin/activate && \
         pip install -r requirements.txt psycopg2-binary uwsgi
 
