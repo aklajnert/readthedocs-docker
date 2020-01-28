@@ -55,8 +55,16 @@ def main():
         else:
             print(f"Admin account {admin_username} already exist.")
 
-    if not os.environ.get("RTD_DISABLE_UWSGI"):
-        os.execvp("uwsgi", ["uwsgi", "--ini", "/etc/uwsgi.ini"])
+    if not os.environ.get("RTD_DISABLE_GUNICORN"):
+        os.execvp(
+            "gunicorn",
+            [
+                "gunicorn",
+                f"--workers={os.cpu_count() * 2}",
+                "--bind=:8000",
+                "readthedocs.wsgi:application",
+            ],
+        )
     else:
         os.execvp(
             "/venv/bin/python",

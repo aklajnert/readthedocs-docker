@@ -37,13 +37,12 @@ RUN set -ex && \
     python3.8 -m pip install virtualenv && \
     python3.6 -m venv /venv && \
         source /venv/bin/activate && \
-        pip install -r requirements.txt psycopg2-binary uwsgi
+        pip install -r requirements.txt psycopg2-binary gunicorn
 
 COPY docker-settings.py readthedocs/settings/docker.py
 
 ENV DJANGO_SETTINGS_MODULE=readthedocs.settings.docker
 
-COPY uwsgi.ini /etc/uwsgi.ini
 COPY entrypoint.py ./
 
 EXPOSE 8000 8088
