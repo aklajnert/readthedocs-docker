@@ -61,6 +61,7 @@ def main():
             [
                 "gunicorn",
                 f"--workers={os.cpu_count() * 2}",
+                "--timeout=600",
                 "--bind=:8000",
                 "readthedocs.wsgi:application",
             ],
