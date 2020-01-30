@@ -50,10 +50,15 @@ class Compose:
         with open(root_dir / "docker-compose.yml") as compose_fh:
             compose = yaml.safe_load(compose_fh)
 
-        compose["services"]["nginx"]["ports"][0] = ":".join([str(self.open_port), "8000"])
+        compose["services"]["nginx"]["ports"][0] = ":".join(
+            [str(self.open_port), "8000"]
+        )
         compose["services"]["nginx"]["build"]["context"] = str(root_dir / "nginx")
         compose["services"]["web"]["build"]["context"] = str(root_dir)
-        
+        compose["services"]["web"]["environment"].append(
+            "RTD_DOMAIN=localhost:{}".format(self.open_port)
+        )
+
         yaml.Dumper.ignore_aliases = lambda *_: True
         with open(self._directory / "docker-compose.yml", "w") as target_compose_fh:
             yaml.dump(compose, target_compose_fh)
@@ -63,7 +68,7 @@ class Compose:
     def __enter__(self):
         # first build
         subprocess.call(["docker-compose", "build"], cwd=self._directory)
-        
+
         # then run
         subprocess.call(["docker-compose", "up", "-d"], cwd=self._directory)
 
