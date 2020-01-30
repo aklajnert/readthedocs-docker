@@ -50,31 +50,27 @@ class Compose:
         with open(root_dir / "docker-compose.yml") as compose_fh:
             compose = yaml.safe_load(compose_fh)
 
-        compose["services"]["web"]["ports"][0] = ":".join([str(self.open_port), "8000"])
-        compose["services"]["web"]["environment"].append(
-            "RTD_DOMAIN=localhost:{}".format(self.open_port)
-        )
-
-        image_name = compose["services"]["web"]["image"]
-        images = subprocess.check_output(("docker", "images", image_name)).decode()
-        if len(images.splitlines()) == 1:
-            print("Docker image {} not found. Building...".format(image_name))
-            subprocess.call(
-                ("docker", "build", "-t", image_name, "."), cwd=str(root_dir)
-            )
-
+        compose["services"]["nginx"]["ports"][0] = ":".join([str(self.open_port), "8000"])
+        compose["services"]["nginx"]["build"]["context"] = str(root_dir / "nginx")
+        compose["services"]["web"]["build"]["context"] = str(root_dir)
+        
+        yaml.Dumper.ignore_aliases = lambda *_: True
         with open(self._directory / "docker-compose.yml", "w") as target_compose_fh:
             yaml.dump(compose, target_compose_fh)
         self.username = None
         self.password = None
 
     def __enter__(self):
+        # first build
+        subprocess.call(["docker-compose", "build"], cwd=self._directory)
+        
+        # then run
         subprocess.call(["docker-compose", "up", "-d"], cwd=self._directory)
 
         n = 0
         while n < 60:
             logs = self.get_logs()
-            if "spawned uWSGI worker" in logs:
+            if "Starting gunicorn 20.0.4" in logs:
                 match = self.credentials_regex.search(logs)
                 if match:
                     self.username = match.group(1)
