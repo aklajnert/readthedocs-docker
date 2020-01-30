@@ -34,9 +34,10 @@ services:
     networks:
       - readthedocs
   web:
-    image: readthedocs
+    build:
+      context: .
     restart: unless-stopped
-    volumes:
+    volumes: &common-volumes
       - ./.data/rtd/builds:/readthedocs.org/user_builds
       - ./.data/rtd/private_cname_project:/readthedocs.org/private_cname_project
       - ./.data/rtd/private_cname_root:/readthedocs.org/private_cname_root
@@ -44,8 +45,7 @@ services:
       - ./.data/rtd/public_cname_project:/readthedocs.org/public_cname_project
       - ./.data/rtd/public_cname_root:/readthedocs.org/public_cname_root
       - ./.data/rtd/public_web_root:/readthedocs.org/public_web_root
-    ports:
-      - 8000:8000
+      - ./.data/rtd/static:/readthedocs.org/static
     environment:
       - RTD_ADMIN_USERNAME=rtd-admin
       - RTD_ADMIN_EMAIL=rtd-admin@example.com
@@ -55,6 +55,17 @@ services:
       - db
       - redis
       - elasticsearch
+  nginx:
+    build:
+      context: nginx
+    restart: unless-stopped
+    volumes: *common-volumes
+    networks:
+      - readthedocs
+    ports:
+      - 8000:8000
+    depends_on:
+      - web
 
 networks:
   readthedocs:
