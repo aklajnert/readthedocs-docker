@@ -2,16 +2,12 @@
 
 Docker image to run readthedocs.org on-premise.
 
-## Build image
-
-```bash
-docker build -t readthedocs .
-```
-
 ## Running application
 
 The recommended approach is to use `docker-compose`. It contains full stack necessary to
-run `readthedocs.org` app including `PostgresSQL` database, `Redis` and the application itself.
+run `readthedocs.org` app including `PostgresSQL` database, `nginx` reverse proxy, `celery` workers, 
+`Redis` and the application itself. The project setup is meant to be run with `docker-compose` - standalone
+run is discouraged.
 
 Simply run `docker compose up`, and application will start.
 
