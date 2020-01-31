@@ -42,8 +42,6 @@ All the configuration is done via environment variables:
 - **RTD_ADMIN_USERNAME** (`rtd-admin`) - username for the admin user; this is set in the compose
     file, no admin account will be created if this variable is missing,
 - **RTD_ADMIN_EMAIL** (`rtd-admin@example.com`) - readthedocs admin e-mail,
-- **RTD_DISABLE_GUNICORN** (`False`): run readthedocs with simple `runserver` command instead 
-    of using `gunicorn`,
 - **RTD_DEBUG** (`False`): run Django in debug mode,
 - **RTD_DB_NAME** (`rtd`): name of the Postgres readthedocs database,
 - **RTD_DB_USER** (`rtd-user`): username for the database,

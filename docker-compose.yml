@@ -55,6 +55,17 @@ services:
       - db
       - redis
       - elasticsearch
+  celery:
+    build:
+      context: .
+    restart: unless-stopped
+    volumes: *common-volumes
+    environment:
+      - IS_CELERY=true
+    networks:
+      - readthedocs
+    depends_on:
+      - web
   nginx:
     build:
       context: nginx

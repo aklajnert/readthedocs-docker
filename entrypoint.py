@@ -11,8 +11,29 @@ def main():
 
     django.setup()
 
-    User = get_user_model()
+    if not settings.IS_CELERY:
+        setup_environment()
+        command = (
+            "gunicorn",
+            [
+                "gunicorn",
+                f"--workers={os.cpu_count() * 2}",
+                "--timeout=600",
+                "--bind=:8000",
+                "readthedocs.wsgi:application",
+            ],
+        )
+    else:
+        command = (
+            "celery",
+            ["celery", "-A", "readthedocs.worker:app", "worker", "--loglevel=info"],
+        )
 
+    os.execvp(*command)    
+
+
+def setup_environment():
+    User = get_user_model()
     migrate = ("python", "manage.py", "migrate")
     assert subprocess.call(migrate) == 0, "Database sync failed"
     collect_static = (
@@ -25,7 +46,6 @@ def main():
         "0",
     )
     assert subprocess.call(collect_static) == 0, "Collect static job failed"
-
     if not User.objects.filter(username=settings.SLUMBER_USERNAME):
         User.objects.create_superuser(
             username=settings.SLUMBER_USERNAME,
@@ -33,10 +53,8 @@ def main():
             email="slumber@example.com",
         )
         print("Created slumber user.")
-
     admin_username = os.environ.get("RTD_ADMIN_USERNAME")
     admin_email = os.environ.get("RTD_ADMIN_EMAIL", "rtd-admin@example.com")
-
     if admin_username:
         from allauth.account.models import EmailAddress
 
@@ -54,23 +72,6 @@ def main():
 
         else:
             print(f"Admin account {admin_username} already exist.")
-
-    if not os.environ.get("RTD_DISABLE_GUNICORN"):
-        os.execvp(
-            "gunicorn",
-            [
-                "gunicorn",
-                f"--workers={os.cpu_count() * 2}",
-                "--timeout=600",
-                "--bind=:8000",
-                "readthedocs.wsgi:application",
-            ],
-        )
-    else:
-        os.execvp(
-            "/venv/bin/python",
-            ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"],
-        )
 
 
 if __name__ == "__main__":

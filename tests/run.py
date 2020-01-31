@@ -54,6 +54,7 @@ class Compose:
             [str(self.open_port), "8000"]
         )
         compose["services"]["nginx"]["build"]["context"] = str(root_dir / "nginx")
+        compose["services"]["celery"]["build"]["context"] = str(root_dir)
         compose["services"]["web"]["build"]["context"] = str(root_dir)
         compose["services"]["web"]["environment"].append(
             "RTD_DOMAIN=localhost:{}".format(self.open_port)
