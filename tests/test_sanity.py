@@ -53,8 +53,17 @@ def test_sanity(app):
         time.sleep(1)
         driver.find_element_by_link_text("Builds").click()
 
-        builds = driver.find_elements_by_xpath("//li/div/a")
-        assert all(build.text.startswith("Passed") for build in builds)
+        while True:
+            driver.refresh()
+            builds = driver.find_elements_by_xpath("//li/div/a")
+            builds_text = [build.text.split(" ")[0] for build in builds]
+            intermediate_states = ("Triggered", "Cloning", "Installing", "Building")
+            if builds_text[0] not in intermediate_states and builds_text[1] not in intermediate_states:
+                break
+            else:
+                time.sleep(1)
+            
+        assert builds_text == ["Passed", "Passed"], builds_text
 
         driver.find_element_by_link_text("View Docs").click()
 
