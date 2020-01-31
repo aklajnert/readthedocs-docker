@@ -29,13 +29,7 @@ def main():
             ["celery", "-A", "readthedocs.worker:app", "worker", "--loglevel=info"],
         )
 
-    if not os.environ.get("RTD_DISABLE_GUNICORN"):
-        os.execvp(*command)
-    else:
-        os.execvp(
-            "/venv/bin/python",
-            ["/venv/bin/python", "-u", "manage.py", "runserver", "0.0.0.0:8000"],
-        )
+    os.execvp(*command)    
 
 
 def setup_environment():
