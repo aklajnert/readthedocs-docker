@@ -14,6 +14,7 @@ def env(variable, default=None):
 DOMAIN = env("RTD_DOMAIN", "localhost:8000").split(":")
 IS_CELERY = env("IS_CELERY", False)
 
+
 class DockerSettings(CommunityBaseSettings):
     PRODUCTION_DOMAIN = ":".join(DOMAIN)
     WEBSOCKET_HOST = f"{DOMAIN[0]}:8088"
@@ -41,19 +42,18 @@ class DockerSettings(CommunityBaseSettings):
 
     SLUMBER_USERNAME = env("RTD_SLUMBER_USER", "slumber")
     SLUMBER_PASSWORD = env("RTD_SLUMBER_PASS", "<slumber-password>")
-    SLUMBER_API_HOST = "http://127.0.0.1:8000"
-    PUBLIC_API_URL = "http://127.0.0.1:8000"
+    SLUMBER_API_HOST = "http://web:8000"
+    PUBLIC_API_URL = "http://web:8000"
 
     REDIS_HOST = env("RTD_REDIS_HOST", "redis")
     REDIS_PORT = env("RTD_REDIS_PORT", "6379")
 
     BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-    
-    if IS_CELERY:
-        CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-        CELERY_RESULT_SERIALIZER = "json"
-        CELERY_ALWAYS_EAGER = True
-        CELERY_TASK_IGNORE_RESULT = False
+
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+    CELERY_RESULT_SERIALIZER = "json"
+    CELERY_ALWAYS_EAGER = bool(IS_CELERY)
+    CELERY_TASK_IGNORE_RESULT = False
 
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     FILE_SYNCER = "readthedocs.builds.syncers.LocalSyncer"

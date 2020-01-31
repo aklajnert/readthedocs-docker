@@ -13,21 +13,24 @@ def main():
 
     if not settings.IS_CELERY:
         setup_environment()
-        args = (f"--workers={os.cpu_count() * 2}",
-                "--timeout=600",
-                "--bind=:8000",
-                "readthedocs.wsgi:application")
-    else:
-        args = ("readthedocs.worker:create_application",)
-
-    if not os.environ.get("RTD_DISABLE_GUNICORN"):
-        os.execvp(
+        command = (
             "gunicorn",
             [
                 "gunicorn",
-                *args
+                f"--workers={os.cpu_count() * 2}",
+                "--timeout=600",
+                "--bind=:8000",
+                "readthedocs.wsgi:application",
             ],
         )
+    else:
+        command = (
+            "celery",
+            ["celery", "-A", "readthedocs.worker:app", "worker", "--loglevel=info"],
+        )
+
+    if not os.environ.get("RTD_DISABLE_GUNICORN"):
+        os.execvp(*command)
     else:
         os.execvp(
             "/venv/bin/python",
