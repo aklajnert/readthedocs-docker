@@ -37,7 +37,7 @@ RUN set -ex && \
     python3.8 -m pip install virtualenv && \
     python3.6 -m venv /venv && \
         source /venv/bin/activate && \
-        pip install -r requirements.txt psycopg2-binary gunicorn
+        python3.6 -m pip install -r requirements/docker.txt gunicorn
 
 COPY docker-settings.py readthedocs/settings/docker.py
 
