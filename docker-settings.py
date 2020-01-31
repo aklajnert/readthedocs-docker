@@ -12,7 +12,7 @@ def env(variable, default=None):
 
 
 DOMAIN = env("RTD_DOMAIN", "localhost:8000").split(":")
-
+IS_CELERY = env("IS_CELERY", False)
 
 class DockerSettings(CommunityBaseSettings):
     PRODUCTION_DOMAIN = ":".join(DOMAIN)
@@ -48,10 +48,12 @@ class DockerSettings(CommunityBaseSettings):
     REDIS_PORT = env("RTD_REDIS_PORT", "6379")
 
     BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-    CELERY_RESULT_SERIALIZER = "json"
-    CELERY_ALWAYS_EAGER = True
-    CELERY_TASK_IGNORE_RESULT = False
+    
+    if IS_CELERY:
+        CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+        CELERY_RESULT_SERIALIZER = "json"
+        CELERY_ALWAYS_EAGER = True
+        CELERY_TASK_IGNORE_RESULT = False
 
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     FILE_SYNCER = "readthedocs.builds.syncers.LocalSyncer"
