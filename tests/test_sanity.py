@@ -5,7 +5,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-DESIRED_RTD_VERSION = "3.11.3"
+DESIRED_RTD_VERSION = "3.11.6"
 SHOW_BROWSER = os.environ.get("SHOW_BROWSER", False)
 
 
