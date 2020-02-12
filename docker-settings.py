@@ -11,15 +11,15 @@ def env(variable, default=None):
     return os.environ.get(variable, default)
 
 
-DOMAIN = env("RTD_DOMAIN", "localhost:8000").split(":")
-IS_CELERY = env("IS_CELERY", False)
-
-
 class DockerSettings(CommunityBaseSettings):
+    DOMAIN = env("RTD_DOMAIN", "localhost:8000").split(":")
+    IS_CELERY = env("IS_CELERY", False)
+
     PRODUCTION_DOMAIN = ":".join(DOMAIN)
     WEBSOCKET_HOST = f"{DOMAIN[0]}:8088"
 
     DEBUG = env("RTD_DEBUG", False)
+
     SERVE_DOCS = [constants.PUBLIC, constants.PRIVATE]
 
     @property
@@ -52,7 +52,7 @@ class DockerSettings(CommunityBaseSettings):
 
     CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
     CELERY_RESULT_SERIALIZER = "json"
-    CELERY_ALWAYS_EAGER = bool(IS_CELERY)
+    CELERY_ALWAYS_EAGER = False
     CELERY_TASK_IGNORE_RESULT = False
 
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
