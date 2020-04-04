@@ -1,4 +1,4 @@
-FROM aklajnert/snakepit:2.0-bullseye-slim
+FROM aklajnert/snakepit:2.1-bullseye-slim
 
 RUN set -ex && \
     apt-get update && \
