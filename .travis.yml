@@ -17,6 +17,7 @@ before_install:
 
 install:
   - python3 -m pip install -r tests/requirements.txt
+  - seleniumbase install chromedriver
 
 script:
   - pytest -s
