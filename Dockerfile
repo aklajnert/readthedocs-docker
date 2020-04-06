@@ -30,11 +30,11 @@ WORKDIR readthedocs.org
 SHELL ["/bin/bash", "-c"]
 
 RUN set -ex && \
-    python2.7 -m pip install virtualenv && \
-    python3.5 -m pip install virtualenv && \
-    python3.6 -m pip install virtualenv && \
-    python3.7 -m pip install virtualenv && \
-    python3.8 -m pip install virtualenv && \
+    python2.7 -m pip install virtualenv --upgrade && \
+    python3.5 -m pip install virtualenv --upgrade && \
+    python3.6 -m pip install virtualenv --upgrade && \
+    python3.7 -m pip install virtualenv --upgrade && \
+    python3.8 -m pip install virtualenv --upgrade && \
     python3.6 -m venv /venv && \
         source /venv/bin/activate && \
         python3.6 -m pip install -r requirements/docker.txt gunicorn
