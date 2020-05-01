@@ -29,7 +29,7 @@ def main():
             ["celery", "-A", "readthedocs.worker:app", "worker", "--loglevel=info"],
         )
 
-    os.execvp(*command)    
+    os.execvp(*command)
 
 
 def setup_environment():
