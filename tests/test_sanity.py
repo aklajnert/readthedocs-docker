@@ -3,7 +3,7 @@ import time
 
 from selenium.webdriver.common.by import By
 
-DESIRED_RTD_VERSION = "4.1.7"
+DESIRED_RTD_VERSION = "5.8.2"
 SHOW_BROWSER = os.environ.get("SHOW_BROWSER", False)
 
 
