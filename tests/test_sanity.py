@@ -1,84 +1,64 @@
 import os
 import time
-from pathlib import Path
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
-DESIRED_RTD_VERSION = "3.11.6"
+DESIRED_RTD_VERSION = "5.8.2"
 SHOW_BROWSER = os.environ.get("SHOW_BROWSER", False)
 
 
-class Driver:
-    """Context manager to handle chrome driver."""
-
-    def __init__(self):
-        self.driver = None
-
-    def __enter__(self):
-        chrome_options = Options()
-        if not SHOW_BROWSER:
-            chrome_options.add_argument("--headless")
-
-        self.driver = webdriver.Chrome(
-            Path(__file__).parent / "chromedriver_72.0.3626.7", options=chrome_options
-        )
-        return self.driver
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.driver.close()
-
-
-def test_sanity(app):
+def test_sanity(app, sb):
     """Check if the basic functionality works correctly."""
     compose = app
 
-    with Driver() as driver:
-        print("Starting selenium...")
-        driver.get("http://localhost:{}".format(compose.open_port))
+    print("Starting selenium...")
+    sb.get("http://localhost:{}".format(compose.open_port))
 
-        version = driver.find_element_by_xpath(
-            "//a[@href='http://docs.readthedocs.io/page/changelog.html']"
-        )
-        assert version.text == DESIRED_RTD_VERSION
+    version = sb.find_element(
+        "#footer > div > div.footer-bottom > div.column-copyright > p:nth-child(2) > small > a"
+    )
+    assert version.text == DESIRED_RTD_VERSION
 
-        _log_in(driver, compose.username, compose.password)
+    _log_in(sb, compose.username, compose.password)
 
-        assert driver.title == "Project Dashboard | Read the Docs"
+    assert sb.get_page_title() == "Project Dashboard | Read the Docs"
 
-        # check if the documentation will be built properly
-        time.sleep(1)
-        driver.find_element_by_link_text("Import our own demo project").click()
+    # check if the documentation will be built properly
+    time.sleep(1)
+    sb.find_link_text("Import our own demo project").click()
 
-        time.sleep(1)
-        driver.find_element_by_link_text("Builds").click()
+    time.sleep(1)
+    sb.find_link_text("Builds").click()
 
-        while True:
-            driver.refresh()
-            builds = driver.find_elements_by_xpath("//li/div/a")
-            builds_text = [build.text.split(" ")[0] for build in builds]
-            intermediate_states = ("Triggered", "Cloning", "Installing", "Building")
-            if builds_text[0] not in intermediate_states and builds_text[1] not in intermediate_states:
-                break
-            else:
-                time.sleep(1)
-            
-        assert builds_text == ["Passed", "Passed"], builds_text
+    while True:
+        sb.refresh()
+        builds = sb.find_elements("//li/div/a", by=By.XPATH)
+        builds_text = [build.text.split(" ")[0] for build in builds]
+        intermediate_states = ("Triggered", "Cloning", "Installing", "Building")
+        if (
+            builds_text[0] not in intermediate_states
+            and builds_text[1] not in intermediate_states
+        ):
+            break
+        else:
+            time.sleep(1)
 
-        driver.find_element_by_link_text("View Docs").click()
+    assert builds_text == ["Passed", "Passed"], builds_text
 
-        assert (
-            driver.current_url
-            == f"http://localhost:{compose.open_port}/docs/rtd-admin-demo/en/latest/"
-        )
-        assert (
-            driver.find_element_by_tag_name("h1").text
-            == "Welcome to Read the Docs Template’s documentation!"
-        )
+    sb.find_link_text("View Docs").click()
+
+    assert (
+        sb.current_url
+        == f"http://localhost:{compose.open_port}/docs/rtd-admin-demo/en/latest/"
+    )
+    assert (
+        sb.find_element("h1", by=By.TAG_NAME).text
+        == "Welcome to Read the Docs Template’s documentation!"
+    )
 
 
 def _log_in(driver, username, password):
-    driver.find_element_by_link_text("Log in").click()
-    driver.find_element_by_id("id_login").send_keys(username)
-    driver.find_element_by_id("id_password").send_keys(password)
-    driver.find_element_by_xpath("//button[contains(.,'Sign In')]").click()
+    driver.find_link_text("Log in").click()
+    driver.find_element("id_login", by=By.ID).send_keys(username)
+    driver.find_element("id_password", by=By.ID).send_keys(password)
+    driver.find_element("//button[contains(.,'Sign In')]", by=By.XPATH).click()
